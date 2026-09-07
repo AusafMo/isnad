@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.21.5] — 2026-09-07
+
+### Changed
+
+- **Python floor lowered to 3.11**: `requires-python` dropped from
+  `>=3.12` to `>=3.11`, a 3.11 classifier added, and a 3.11 lane added to the CI
+  matrix. No code changes — the codebase already ran on 3.11 (`StrEnum` and
+  `X | Y` unions are native there); the `>=3.12` pin was conservative.
+
 ## [2.21.4] — 2026-09-04
 
 ### Fixed
