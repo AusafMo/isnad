@@ -21,7 +21,7 @@ Quickstart::
     action = decide(cg, cv)
 """
 
-__version__ = "2.21.4"
+__version__ = "2.21.5"
 __author__ = "Ali Zahid Raja"
 
 # Public API — re-exports
