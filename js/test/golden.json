@@ -1,24 +1,24 @@
 {
-  "canon_a": "{\"chain\":[{\"grade\":\"reliable\",\"grade_rationale\":\"r\",\"input_hash\":null,\"invocation_timestamp\":null,\"model_identifier\":null,\"model_version\":null,\"narrator_id\":\"src\",\"narrator_type\":\"dataset\",\"output_hash\":null,\"upstream_ids\":[]}],\"claim_id\":\"c1\",\"claim_text\":\"p = mv\",\"environment\":{\"isnad_version\":\"2.21.5\",\"platform\":\"test\",\"python_version\":\"3.12\"},\"final_grade\":\"hasan\",\"generated_at\":\"2026-08-30T00:00:00+00:00\",\"grading_strategy\":{\"name\":\"RefinedWeakestLink\",\"parameters\":{},\"version\":\"1\"},\"human_oversight\":[],\"record_id\":\"00000000-0000-4000-8000-000000000001\",\"record_version\":\"1.0\",\"source_documents\":[{\"content_hash\":null,\"licence\":null,\"retrieved_at\":null,\"uri\":\"https://example.com/x\"}],\"weakest_link\":{\"grade\":\"reliable\",\"narrator_id\":\"src\",\"why\":\"lowest grade\"}}",
-  "hash_a": "af9293e6b5f2c37101e1d7d862bccbb964a6a21df5869fb818c84f57bc581a64",
-  "hmac_a": "c686598ea24f826b44c80f94b6b7458b75ff25406e2f23a71b3e50945f9f8adc",
+  "canon_a": "{\"chain\":[{\"grade\":\"reliable\",\"grade_rationale\":\"r\",\"input_hash\":null,\"invocation_timestamp\":null,\"model_identifier\":null,\"model_version\":null,\"narrator_id\":\"src\",\"narrator_type\":\"dataset\",\"output_hash\":null,\"upstream_ids\":[]}],\"claim_id\":\"c1\",\"claim_text\":\"p = mv\",\"environment\":{\"isnad_version\":\"2.21.6\",\"platform\":\"test\",\"python_version\":\"3.12\"},\"final_grade\":\"hasan\",\"generated_at\":\"2026-08-30T00:00:00+00:00\",\"grading_strategy\":{\"name\":\"RefinedWeakestLink\",\"parameters\":{},\"version\":\"1\"},\"human_oversight\":[],\"record_id\":\"00000000-0000-4000-8000-000000000001\",\"record_version\":\"1.0\",\"source_documents\":[{\"content_hash\":null,\"licence\":null,\"retrieved_at\":null,\"uri\":\"https://example.com/x\"}],\"weakest_link\":{\"grade\":\"reliable\",\"narrator_id\":\"src\",\"why\":\"lowest grade\"}}",
+  "hash_a": "51cb3ccf80d1f62977f73d1df9e4d07401c39c9815b5c674d9cf699854d6dc33",
+  "hmac_a": "63c196de244ad62582cd797ccba66c141b99512c44b97abb5e2ed9b591f9f154",
   "ed25519_pub_raw_hex": "03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8",
-  "ed25519_sig_a_hex": "9601c48330afee8d8c255381b57e85c575c7480256eac9d9c02bafd7a8ba31ffd986b022e5dc699ec14e1015c0858101bd8d7e7b0834bb34053c29e9f4b24d0e",
-  "canon_b": "{\"chain\":[{\"grade\":\"reliable\",\"grade_rationale\":\"r\",\"input_hash\":null,\"invocation_timestamp\":null,\"model_identifier\":null,\"model_version\":null,\"narrator_id\":\"src\",\"narrator_type\":\"dataset\",\"output_hash\":null,\"upstream_ids\":[]}],\"claim_id\":\"c2\",\"claim_text\":\"café — naïve résumé 🚀  line-sep😀\",\"environment\":{\"isnad_version\":\"2.21.5\",\"platform\":\"test\",\"python_version\":\"3.12\"},\"final_grade\":\"daif\",\"generated_at\":\"2026-08-30T00:00:00+00:00\",\"grading_strategy\":{\"name\":\"RefinedWeakestLink\",\"parameters\":{},\"version\":\"1\"},\"human_oversight\":[],\"record_id\":\"00000000-0000-4000-8000-000000000002\",\"record_version\":\"1.0\",\"source_documents\":[{\"content_hash\":null,\"licence\":null,\"retrieved_at\":null,\"uri\":\"https://example.com/x\"}],\"weakest_link\":{\"grade\":\"reliable\",\"narrator_id\":\"src\",\"why\":\"lowest grade\"}}",
-  "hash_b": "aec6eecacf7e2f5ffd9a36800144f4b4103a59662c16e96ec6a6d04e80aa4ad5",
+  "ed25519_sig_a_hex": "8fb687bf21327856f3c3a11ec84897522e00a2d7db260a1385c6163cca45f4b0feff9c64b5fc75e0c24369538333db9b1bea56ab848e7d4b8362eb582a609707",
+  "canon_b": "{\"chain\":[{\"grade\":\"reliable\",\"grade_rationale\":\"r\",\"input_hash\":null,\"invocation_timestamp\":null,\"model_identifier\":null,\"model_version\":null,\"narrator_id\":\"src\",\"narrator_type\":\"dataset\",\"output_hash\":null,\"upstream_ids\":[]}],\"claim_id\":\"c2\",\"claim_text\":\"café — naïve résumé 🚀  line-sep😀\",\"environment\":{\"isnad_version\":\"2.21.6\",\"platform\":\"test\",\"python_version\":\"3.12\"},\"final_grade\":\"daif\",\"generated_at\":\"2026-08-30T00:00:00+00:00\",\"grading_strategy\":{\"name\":\"RefinedWeakestLink\",\"parameters\":{},\"version\":\"1\"},\"human_oversight\":[],\"record_id\":\"00000000-0000-4000-8000-000000000002\",\"record_version\":\"1.0\",\"source_documents\":[{\"content_hash\":null,\"licence\":null,\"retrieved_at\":null,\"uri\":\"https://example.com/x\"}],\"weakest_link\":{\"grade\":\"reliable\",\"narrator_id\":\"src\",\"why\":\"lowest grade\"}}",
+  "hash_b": "8250e2af19dba9b3800a8d95780bb3ed812d4c589dea6d65ff4b208709f9f84a",
   "merkle_empty": "18f39282003c750f67ed8bd1b7ceaff75c7a838bfa6cf64e1febafb1571b659a",
-  "merkle_batch_root": "281dd058538965c5a914f92db5e59133cf9f40924dfc264429cff5283090d581",
+  "merkle_batch_root": "1f21d8a4c10d5a29230f2c751de21a2fd318521d8c2f56574fa6b67c2359a14d",
   "merkle_sealed_prev_root": null,
   "merkle_proof_record_id": "00000000-0000-4000-8000-000000000002",
-  "merkle_proof_record_hash": "aec6eecacf7e2f5ffd9a36800144f4b4103a59662c16e96ec6a6d04e80aa4ad5",
+  "merkle_proof_record_hash": "8250e2af19dba9b3800a8d95780bb3ed812d4c589dea6d65ff4b208709f9f84a",
   "merkle_proof_leaf_index": 1,
   "merkle_proof_audit_path": [
     [
-      "1ea307c6661d2de1b031ead88e868e7ccd1b34ec5f6562e6d88efd958b4cb8cb",
+      "1b69d54bb288c9d2e4830cec76be0823a61d35fd5a7c616058a47bf2e0561905",
       "left"
     ],
     [
-      "9d9f0ca284df62924f450eb4f5f43fb6ed57bae893634ba98b8ab9fb5863ba55",
+      "588d407e19f81106be5ceedc70aa4febc7b6d650da9076333cd9648ace5bdfd3",
       "right"
     ]
   ],
@@ -63,12 +63,12 @@
     ],
     "human_oversight": [],
     "environment": {
-      "isnad_version": "2.21.5",
+      "isnad_version": "2.21.6",
       "python_version": "3.12",
       "platform": "test"
     },
     "integrity": {
-      "record_hash": "af9293e6b5f2c37101e1d7d862bccbb964a6a21df5869fb818c84f57bc581a64",
+      "record_hash": "51cb3ccf80d1f62977f73d1df9e4d07401c39c9815b5c674d9cf699854d6dc33",
       "hash_algorithm": "SHA-256",
       "canonicalisation": "RFC8785",
       "detached_signature": null
@@ -115,12 +115,12 @@
     ],
     "human_oversight": [],
     "environment": {
-      "isnad_version": "2.21.5",
+      "isnad_version": "2.21.6",
       "python_version": "3.12",
       "platform": "test"
     },
     "integrity": {
-      "record_hash": "aec6eecacf7e2f5ffd9a36800144f4b4103a59662c16e96ec6a6d04e80aa4ad5",
+      "record_hash": "8250e2af19dba9b3800a8d95780bb3ed812d4c589dea6d65ff4b208709f9f84a",
       "hash_algorithm": "SHA-256",
       "canonicalisation": "RFC8785",
       "detached_signature": null
@@ -167,12 +167,12 @@
     ],
     "human_oversight": [],
     "environment": {
-      "isnad_version": "2.21.5",
+      "isnad_version": "2.21.6",
       "python_version": "3.12",
       "platform": "test"
     },
     "integrity": {
-      "record_hash": "2f56557e838a210f8db9855ac92ea6166d99a6a77a0363c29bf276cdda1e0fea",
+      "record_hash": "1bf6c601c05a2a36665471be78a8badad72bf21c97d07584cfc04f8c52381560",
       "hash_algorithm": "SHA-256",
       "canonicalisation": "RFC8785",
       "detached_signature": null

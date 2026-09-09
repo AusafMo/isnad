@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.21.6] — 2026-09-08
+
+### Changed
+
+- **CI/release hardening**: SHA-pinned the release.yml actions (pypa publish
+  branch ref → commit SHA; `checkout` → v7.0.1; `setup-uv` → v10.0.1) and bumped the
+  ci.yml actions to current majors (#228).
+
 ## [2.21.5] — 2026-09-07
 
 ### Changed
