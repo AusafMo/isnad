@@ -1,17 +1,19 @@
-"""Tests for chain-scoped content grounding / context-pollution detection (#216).
+"""Tests for chain-scoped content grounding (#216).
 
 Uses a tiny deterministic stub critic: the critic's own accuracy is not under
-test here, the CHAIN-SCOPING logic is. The stub says CONSISTENT iff the claim
-text appears verbatim in the corpus, CONTRADICTION on an explicit "NOT <claim>"
-marker, else UNVERIFIABLE — enough to drive every branch deterministically.
+test here, the CHAIN-SCOPING logic and the default grounding policy are. The stub
+says CONSISTENT iff the claim text appears verbatim in the corpus, CONTRADICTION
+on an explicit "NOT <claim>" marker, else UNVERIFIABLE — enough to drive every
+branch deterministically.
 """
 
 from __future__ import annotations
 
 from isnad.core.chain import Chain, ChainLinkSpec
 from isnad.core.chain_grounding import (
+    DefaultGroundingPolicy,
     chain_scoped_corpus,
-    detect_context_pollution,
+    check_chain_grounding,
 )
 from isnad.types import ContentVerdict, TransformType
 
@@ -42,6 +44,10 @@ def _link(step: int, *, rows: list[str] | None = None, generative: bool = False)
     )
 
 
+def _check(claim, chain, off_chain_rows):
+    return check_chain_grounding(claim, claim, chain, off_chain_rows, StubCritic())
+
+
 # --- chain_scoped_corpus ---------------------------------------------------
 
 
@@ -60,10 +66,10 @@ def test_corpus_empty_when_no_link_retrieved_anything():
     assert chain_scoped_corpus(chain) == []
 
 
-# --- detect_context_pollution ----------------------------------------------
+# --- default grounding policy ----------------------------------------------
 
 
-def test_legitimate_synthesis_grounded_upstream_is_not_polluted():
+def test_legitimate_synthesis_grounded_upstream_is_not_flagged():
     """router -> retrieval(fetched R) -> synthesis(claim uses R). The synthesis
     link retrieves nothing; the claim is grounded by the UPSTREAM retrieval link
     on the same chain. This MUST NOT be flagged — the core false-positive a
@@ -74,64 +80,95 @@ def test_legitimate_synthesis_grounded_upstream_is_not_polluted():
         _link(1, rows=["R"]),  # retrieval worker fetched R
         _link(2, generative=True),  # synthesis, fetched nothing, asserts R
     ])
-    res = detect_context_pollution(claim, claim, chain, off_chain_rows=[], critic=StubCritic())
+    res = _check(claim, chain, off_chain_rows=[])
     assert res.on_chain_verdict is ContentVerdict.CONSISTENT
-    assert res.polluted is False
+    assert res.grounded_off_chain_only is False
 
 
-def test_claim_grounded_only_off_chain_is_polluted():
+def test_claim_grounded_only_off_chain_is_flagged():
     """The claim is grounded ONLY in a sibling branch's rows, never on its own
-    chain — the context-pollution signature."""
+    chain — the grounding-gap signature."""
     claim = "R"
     chain = Chain([_link(0), _link(1, generative=True)])  # nothing on-chain grounds R
-    res = detect_context_pollution(claim, claim, chain, off_chain_rows=["R"], critic=StubCritic())
+    res = _check(claim, chain, off_chain_rows=["R"])
     assert res.on_chain_verdict is not ContentVerdict.CONSISTENT
     assert res.off_chain_verdict is ContentVerdict.CONSISTENT
-    assert res.polluted is True
+    assert res.grounded_off_chain_only is True
 
 
-def test_grounded_both_on_and_off_chain_is_not_polluted():
+def test_grounded_both_on_and_off_chain_is_not_flagged():
     """If the row is legitimately on-chain, an off-chain copy is irrelevant —
     the claim rests on its own path."""
     claim = "R"
     chain = Chain([_link(0, rows=["R"]), _link(1, generative=True)])
-    res = detect_context_pollution(claim, claim, chain, off_chain_rows=["R"], critic=StubCritic())
+    res = _check(claim, chain, off_chain_rows=["R"])
     assert res.on_chain_verdict is ContentVerdict.CONSISTENT
-    assert res.polluted is False
+    assert res.grounded_off_chain_only is False
 
 
-def test_grounded_nowhere_is_not_pollution_just_unverifiable():
-    """A claim no corpus supports is the ordinary UNVERIFIABLE case, not
-    pollution — pollution requires positive off-chain grounding."""
+def test_grounded_nowhere_is_not_flagged_just_unverifiable():
+    """A claim no corpus supports is the ordinary UNVERIFIABLE case, not a
+    grounding gap — flagging requires positive off-chain grounding."""
     claim = "R"
     chain = Chain([_link(0), _link(1, generative=True)])
-    res = detect_context_pollution(
-        claim, claim, chain, off_chain_rows=["something else"], critic=StubCritic()
-    )
+    res = _check(claim, chain, off_chain_rows=["something else"])
     assert res.on_chain_verdict is ContentVerdict.UNVERIFIABLE
     assert res.off_chain_verdict is ContentVerdict.UNVERIFIABLE
-    assert res.polluted is False
+    assert res.grounded_off_chain_only is False
 
 
-def test_on_chain_contradiction_is_not_masked_as_pollution():
-    """If the chain's own rows CONTRADICT the claim, that is not pollution — the
-    off-chain grounding does not paper over a live on-chain contradiction. The
-    result stays not-polluted; the contradiction surfaces via the normal critic
-    path (the caller sees on_chain_verdict=CONTRADICTION)."""
+def test_on_chain_contradiction_is_not_masked_as_grounding_gap():
+    """If the chain's own rows CONTRADICT the claim, that is not a grounding gap —
+    the off-chain grounding does not paper over a live on-chain contradiction. The
+    flag stays False; the contradiction surfaces via the normal critic path (the
+    caller sees on_chain_verdict=CONTRADICTION)."""
     claim = "R"
     chain = Chain([_link(0, rows=["NOT R"]), _link(1, generative=True)])
-    res = detect_context_pollution(claim, claim, chain, off_chain_rows=["R"], critic=StubCritic())
+    res = _check(claim, chain, off_chain_rows=["R"])
     assert res.on_chain_verdict is ContentVerdict.CONTRADICTION
-    assert res.polluted is False
+    assert res.grounded_off_chain_only is False
 
 
-# --- serialization round-trip ----------------------------------------------
+def test_empty_off_chain_disables_the_flag():
+    """off_chain_rows=[] means there is nothing to be grounded-off-chain in —
+    the flag can never fire. Documented as a caller responsibility."""
+    claim = "R"
+    chain = Chain([_link(0), _link(1, generative=True)])
+    res = _check(claim, chain, off_chain_rows=[])
+    assert res.grounded_off_chain_only is False
 
 
-def test_retrieved_rows_serialize_in_to_dict():
+def test_policy_is_swappable():
+    """A caller can substitute its own GroundingPolicy; the default is used when
+    none is given (both paths reach the same result here)."""
+    claim = "R"
+    chain = Chain([_link(0), _link(1, generative=True)])
+    explicit = check_chain_grounding(
+        claim, claim, chain, ["R"], StubCritic(), policy=DefaultGroundingPolicy()
+    )
+    implicit = _check(claim, chain, off_chain_rows=["R"])
+    assert explicit == implicit
+
+
+# --- serialization: retrieved_rows is runtime-only -------------------------
+
+
+def test_retrieved_rows_is_a_runtime_field():
     link = _link(0, rows=["r1", "r2"])
-    assert link.to_dict()["retrieved_rows"] == ["r1", "r2"]
+    assert link.retrieved_rows == ["r1", "r2"]
 
 
-def test_retrieved_rows_default_empty():
-    assert _link(0).to_dict()["retrieved_rows"] == []
+def test_retrieved_rows_not_in_signed_serialization():
+    """retrieved_rows must NOT appear in to_dict() — it is a runtime-only field.
+    Emitting it would change the RFC 8785 canonical form of every signed audit
+    record and pull raw row content into the signed/redact surface (#216 review)."""
+    assert "retrieved_rows" not in _link(0, rows=["r1"]).to_dict()
+
+
+def test_retrieved_rows_is_copied_not_aliased():
+    """A later mutation of the caller's list must not change the link's rows —
+    a live reference would make the audit hash nondeterministic."""
+    src = ["r1"]
+    link = _link(0, rows=src)
+    src.append("r2")
+    assert link.retrieved_rows == ["r1"]
