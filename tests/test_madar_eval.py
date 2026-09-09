@@ -67,10 +67,11 @@ def test_gate_never_fingerprints_a_consistent_claim():
 
 def test_raw_fingerprint_is_intrinsically_hazardous():
     """The raw fingerprint DOES collide on independent agreement — that hazard is
-    the whole reason the gate exists. If this ever drops to zero the eval set has
-    gone toothless (no adversarial agreement cases left)."""
+    the whole reason the gate exists, and the committed headline is 0.750 (6/8).
+    Pin a floor at 0.5 (not just > 0), so a future edit that softens the agreement
+    cases can't silently deflate the headline while CI stays green."""
     raw, _gated = _rows()
-    assert raw["false_positive_rate_agreement"] > 0.0
+    assert raw["false_positive_rate_agreement"] >= 0.5
 
 
 def test_recall_is_total_on_shared_errors():
@@ -90,8 +91,19 @@ def test_gated_oracle_row_has_no_worse_precision_than_raw():
     assert gated["fp"] < raw["fp"]
 
 
-def test_eval_set_hash_is_stable():
-    """The re-runnability pin is deterministic for a fixed eval set."""
+# The eval-set hash committed to RESULTS.md / results.json. Pinned here so that
+# ANY mutation of the labeled set (a reworded case, a flipped label, an added
+# pair) breaks CI — the whole point of the re-runnability pin. Regenerate with
+# `python experiments/madar_eval/run.py` and update this constant deliberately.
+_COMMITTED_EVAL_SET_SHA256 = "c2b9872ba7fa6b0387472c021d9b18042409adbee87fb391b6c740c9840b9cb8"
+
+
+def test_eval_set_hash_matches_committed():
+    """Pin against the committed hash, not just self-determinism. A prior version
+    only checked sha(cases) == sha(cases), which stays green through any eval-set
+    edit — contradicting the 'numbers cannot silently drift' claim. This compares
+    to the committed constant, so a drift fails loudly."""
     cases = all_cases()
-    assert _eval_set_sha256(cases) == _eval_set_sha256(all_cases())
+    assert _eval_set_sha256(cases) == _eval_set_sha256(all_cases())  # deterministic
+    assert _eval_set_sha256(cases) == _COMMITTED_EVAL_SET_SHA256  # unchanged
     assert len(_eval_set_sha256(cases)) == 64

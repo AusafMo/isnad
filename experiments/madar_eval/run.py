@@ -164,9 +164,12 @@ def build_report(
         f"| `shares_error_with` (raw fingerprint, **measured**) | {raw['recall']:.3f} | "
         f"{raw['precision']:.3f} | {raw['f1']:.3f} | {raw['false_positive_rate']:.3f} | "
         f"**{raw['false_positive_rate_agreement']:.3f}** |",
+        # Gated row: only recall is a real (if oracle-inflated) figure. Precision,
+        # F1, and both FP cells are 0/1 *by construction of the oracle*, not
+        # measured — print them as "— (structural)" so a screenshot or README-lift
+        # can never read "content-madār: FP 0.000" as an empirical claim.
         f"| `detect_content_madar` (gated, **oracle — structural**) | {gated['recall']:.3f} | "
-        f"{gated['precision']:.3f} | {gated['f1']:.3f} | {gated['false_positive_rate']:.3f} | "
-        f"{gated['false_positive_rate_agreement']:.3f} |",
+        f"— (structural) | — (structural) | — (structural) | — (structural) |",
         "",
         "## Reading the numbers",
         "",
@@ -185,22 +188,35 @@ def build_report(
         "  that oracle** — not because the detector was validated. Break `shares_error_with`",
         "  to fire on everything and this row still reads 0.",
         "- The gate's *real* false-positive contribution in production is",
-        "  `critic_false_contradiction_rate × raw_fire_rate` — the chance the critic wrongly",
-        "  calls an agreement a contradiction, times the ~0.75 chance the fingerprint then",
-        "  collides. The first factor is measured in `experiments/critic_eval`",
-        "  (`false_contradiction_rate`), not here. This harness does not measure it; it",
-        "  assumes a perfect critic. The honest claim is narrow: **the bare fingerprint is",
-        "  hazardous (measured), and gating on a prior CONTRADICTION verdict is what keeps",
-        "  it away from correct agreement (structural).**",
+        "  approximately `fcr_base × fcr_corr × raw_fire_rate` — `detect_content_madar`",
+        "  fires only when *both* the base AND the corroborating claim are (mis)flagged",
+        "  CONTRADICTION, so *two* independent false-contradiction draws must line up, times",
+        "  the ~0.75 chance the fingerprint then collides. Each `false_contradiction_rate`",
+        "  factor is measured in `experiments/critic_eval`, not here. This harness does not",
+        "  measure the end-to-end rate; it assumes a perfect critic (both factors = 0). The",
+        "  gated **recall** of 1.0 is oracle-inflated the same way the FP is — it reflects the",
+        "  fed labels, not measured detector recall. The honest claim is narrow: **the bare",
+        "  fingerprint is hazardous (measured), and gating on a prior CONTRADICTION verdict",
+        "  keeps it away from correct agreement (structural).**",
         "",
         "## What this measures — and what it does not",
         "",
-        "This calibrates the **detectable** half of content-level madār: claims whose",
-        "wrongness the corpus can verify. It says nothing about the *undetectable* half —",
-        "two independent sources repeating the same received error on a claim the corpus",
-        "cannot check. That case is undecidable by construction (there is no wrongness",
-        "oracle to turn *same content* into *same error*), and #54 discloses it as a",
-        "permanent limit, not a gap to close. See `src/isnad/core/content_madar.py`.",
+        "This **measures the raw-fingerprint hazard** (its false-positive rate on independent",
+        "agreement) and **demonstrates the gate short-circuit** — it does not measure the",
+        "shipped (gated) detector's end-to-end false-positive rate as a single number (that",
+        "needs the two `false_contradiction_rate` factors above; see the follow-up issue). It",
+        "also says nothing about the *undetectable* half of content-level madār — two",
+        "independent sources repeating the same received error on a claim the corpus cannot",
+        "check. That case is undecidable by construction (there is no wrongness oracle to turn",
+        "*same content* into *same error*), and #54 discloses it as a permanent limit, not a",
+        "gap to close. See `src/isnad/core/content_madar.py`.",
+        "",
+        "## Sample size",
+        "",
+        "Small pilot set. The headline FP-on-agreement is **6/8 = 0.750** (Wilson 95% CI",
+        "≈ 0.41–0.93); raw recall is **8/8 = 1.000** (saturated). Treat these as a pilot",
+        "signal, not a tight estimate — the direction (the bare fingerprint is hazardous) is",
+        "robust; the exact rate is not pinned by 8 cases.",
     ]
     if misfires:
         lines += [

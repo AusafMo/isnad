@@ -41,8 +41,8 @@ from __future__ import annotations
 SHARED_ERROR: list[tuple[str, str]] = [
     # Same wrong figure, different phrasing (a received wrong number).
     (
-        "The dataset contains 4,200 labeled records.",
-        "There are 4,200 labeled records in the dataset.",
+        "The human genome contains about 500,000 protein-coding genes.",
+        "There are roughly 500,000 protein-coding genes in the human genome.",
     ),
     # Same wrong magnitude for a physical constant (both wrong the same way).
     (
@@ -69,10 +69,11 @@ SHARED_ERROR: list[tuple[str, str]] = [
         "The enzyme denatures irreversibly at exactly 37 degrees Celsius.",
         "At exactly 37 degrees Celsius the enzyme denatures irreversibly.",
     ),
-    # Same wrong number+unit pair (a received wrong dosage).
+    # Same wrong number+unit pair (a received wrong dosage — adult paracetamol
+    # single dose is 500-1000 mg, never 5000 mg; both chains echo the same error).
     (
-        "The recommended dose is 500 mg taken twice daily.",
-        "Patients should take 500 mg of it twice daily as recommended.",
+        "The recommended single dose of paracetamol is 5000 mg.",
+        "Take 5000 mg of paracetamol as a single recommended dose.",
     ),
     # Same wrong negation about the same subject (shared received denial).
     (
